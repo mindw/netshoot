@@ -19,11 +19,11 @@ Cool thing about namespaces is that you can switch between them. You can enter a
 
 * **Container's Network Namespace:** If you're having networking issues with your application's container, you can launch `netshoot` with that container's network namespace like this :
 
-`$ docker run -it --net container:<container_name> nicolaka/netshoot`
+`$ docker run -it --net container:<container_name> gabidavar/netshoot`
 
 * **Host's Network Namespace:** If you think the networking issue is on the host itself, you can launch `netshoot` with that host's network namespace. This is how:
  
-`$ docker run -it --net host nicolaka/netshoot`
+`$ docker run -it --net host gabidavar/netshoot`
 
 * **Network's Network Namespace:** If you want to troubleshoot a Docker network, you can enter the network's namespace using `nsenter`. This is explained in the `nsenter` section below.
 
@@ -31,11 +31,11 @@ Cool thing about namespaces is that you can switch between them. You can enter a
 
 If you want to spin up a throw away container for debugging.
 
-`$ kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --image nicolaka/netshoot -- /bin/bash`
+`$ kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --image gabidavar/netshoot -- /bin/bash`
 
 And if you want to spin up a container on the host's network namespace.
 
-`$ kubectl run tmp-shell --generator=run-pod/v1 --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}'  --image nicolaka/netshoot  -- /bin/bash`
+`$ kubectl run tmp-shell --generator=run-pod/v1 --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}'  --image gabidavar/netshoot  -- /bin/bash`
 
 **Network Problems** 
 
@@ -136,7 +136,7 @@ Now exec into this pod and use the calicoctl directly without any further config
 88    88 88.  ...   88         88 88    88 88.  .88 88.  .88   88
 dP    dP `88888P'   dP   `88888P' dP    dP `88888P' `88888P'   dP
 
-Welcome to Netshoot! (github.com/nicolaka/netshoot)
+Welcome to Netshoot! (github.com/gabidavar/netshoot)
 root @ /
  [1] 🐳  → calicoctl get wep
 WORKLOAD                            NODE              NETWORKS             INTERFACE
@@ -185,25 +185,25 @@ $ docker network create -d overlay perf-test
 Launch two containers:
 
 ```
-🐳  → docker service create --name perf-test-a --network perf-test nicolaka/netshoot iperf -s -p 9999
+🐳  → docker service create --name perf-test-a --network perf-test gabidavar/netshoot iperf -s -p 9999
 7dkcckjs0g7b4eddv8e5ez9nv
 
 
-🐳  → docker service create --name perf-test-b --network perf-test nicolaka/netshoot iperf -c perf-test-a -p 9999
+🐳  → docker service create --name perf-test-b --network perf-test gabidavar/netshoot iperf -c perf-test-a -p 9999
 2yb6fxls5ezfnav2z93lua8xl
 
 
 
  🐳  → docker service ls
 ID            NAME         REPLICAS  IMAGE              COMMAND
-2yb6fxls5ezf  perf-test-b  1/1       nicolaka/netshoot  iperf -c perf-test-a -p 9999
-7dkcckjs0g7b  perf-test-a  1/1       nicolaka/netshoot  iperf -s -p 9999
+2yb6fxls5ezf  perf-test-b  1/1       gabidavar/netshoot  iperf -c perf-test-a -p 9999
+7dkcckjs0g7b  perf-test-a  1/1       gabidavar/netshoot  iperf -s -p 9999
 
 
 
 🐳  → docker ps
 CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS               NAMES
-ce4ff40a5456        nicolaka/netshoot:latest   "iperf -s -p 9999"       31 seconds ago      Up 30 seconds                           perf-test-a.1.bil2mo8inj3r9nyrss1g15qav
+ce4ff40a5456        gabidavar/netshoot:latest   "iperf -s -p 9999"       31 seconds ago      Up 30 seconds                           perf-test-a.1.bil2mo8inj3r9nyrss1g15qav
 
 🐳  → docker logs ce4ff40a5456
 ------------------------------------------------------------
@@ -224,7 +224,7 @@ TCP window size: 85.3 KByte (default)
 ```
 # Continuing on the iperf example. Let's launch netshoot with perf-test-a's container network namespace.
 
-🐳  → docker run -it --net container:perf-test-a.1.0qlf1kaka0cq38gojf7wcatoa  nicolaka/netshoot 
+🐳  → docker run -it --net container:perf-test-a.1.0qlf1kaka0cq38gojf7wcatoa  gabidavar/netshoot 
 
 # Capturing packets on eth0 and tcp port 9999.
 
@@ -264,7 +264,7 @@ Continuing on from `iperf` example. Let's use `netstat` to confirm that it's lis
 
 
 ```
-🐳  → docker run -it --net container:perf-test-a.1.0qlf1kaka0cq38gojf7wcatoa  nicolaka/netshoot 
+🐳  → docker run -it --net container:perf-test-a.1.0qlf1kaka0cq38gojf7wcatoa  gabidavar/netshoot 
 
 / # netstat -tulpn
 Active Internet connections (only servers)
@@ -278,7 +278,7 @@ udp        0      0 127.0.0.11:39552        0.0.0.0:*                           
 `nmap` ("Network Mapper") is an open source tool for network exploration and security auditing. It is very useful for scanning to see which ports are open between a given set of hosts. This is a common thing to check for when installing Swarm or UCP because a range of ports is required for cluster communication. The command analyzes the connection pathway between the host where `nmap` is running and the given target address.
 
 ```
-🐳  → docker run -it --privileged nicolaka/netshoot nmap -p 12376-12390 -dd 172.31.24.25
+🐳  → docker run -it --privileged gabidavar/netshoot nmap -p 12376-12390 -dd 172.31.24.25
 
 ...
 Discovered closed port 12388/tcp on 172.31.24.25
@@ -303,13 +303,13 @@ Continuing the `iperf` example.
 ```
  → docker ps
 CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS               NAMES
-ce4ff40a5456        nicolaka/netshoot:latest   "iperf -s -p 9999"       5 minutes ago       Up 5 minutes                            perf-test-a.1.bil2mo8inj3r9nyrss1g15qav
+ce4ff40a5456        gabidavar/netshoot:latest   "iperf -s -p 9999"       5 minutes ago       Up 5 minutes                            perf-test-a.1.bil2mo8inj3r9nyrss1g15qav
 
-🐳  → docker run -it --net container:perf-test-a.1.bil2mo8inj3r9nyrss1g15qav nicolaka/netshoot iftop -i eth0
+🐳  → docker run -it --net container:perf-test-a.1.bil2mo8inj3r9nyrss1g15qav gabidavar/netshoot iftop -i eth0
 
 ```
 
-![iftop.png](img/iftop.png)
+![iftop.png](https://github.com/mindw/netshoot/raw/master/img/iftop.png)
 
 
 ## drill
@@ -320,7 +320,7 @@ Continuing the `iperf` example, we'll use `drill` to understand how services' DN
 
 
 ```
-🐳  → docker run -it --net container:perf-test-a.1.bil2mo8inj3r9nyrss1g15qav nicolaka/netshoot drill -V 5 perf-test-b
+🐳  → docker run -it --net container:perf-test-a.1.bil2mo8inj3r9nyrss1g15qav gabidavar/netshoot drill -V 5 perf-test-b
 ;; ->>HEADER<<- opcode: QUERY, rcode: NOERROR, id: 0
 ;; flags: rd ; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
 ;; QUESTION SECTION:
@@ -358,13 +358,13 @@ perf-test-b.	600	IN	A	10.0.3.4 <<<<<<<<<<<<<<<<<<<<<<<<<< Service VIP
 Purpose: a simple Unix utility that reads and writes data across network connections, using the TCP or UDP protocol. It's useful for testing and troubleshooting TCP/UDP connections. If there's a firewall rule blocking certain ports, `netcat` can be used to detect
 
 ```
-🐳  →  docker network create -d overlay my-ovl
+🐳  → docker network create -d overlay my-ovl
 55rohpeerwqx8og4n0byr0ehu
 
-🐳  → docker service create --name service-a --network my-ovl -p 8080:8080 nicolaka/netshoot nc -l 8080
+🐳  → docker service create --name service-a --network my-ovl -p 8080:8080 gabidavar/netshoot nc -l 8080
 bnj517hh4ylpf7ewawsp9unrc
 
-🐳  → docker service create --name service-b --network my-ovl nicolaka/netshoot nc -vz service-a 8080
+🐳  → docker service create --name service-b --network my-ovl gabidavar/netshoot nc -vz service-a 8080
 3xv1ukbd3kr03j4uybmmlp27j
 
 🐳  → docker logs service-b.1.0c5wy4104aosovtl1z9oixiso
@@ -385,10 +385,10 @@ Using `netgen` with `docker run`:
 🐳  →  docker network create -d bridge br
 01b167971453700cf0a40d7e1a0dc2b0021e024bbb119541cc8c1858343c9cfc
 
-🐳  →  docker run -d --rm --net br --name c1 nicolaka/netshoot netgen c2 5000
+🐳  →  docker run -d --rm --net br --name c1 gabidavar/netshoot netgen c2 5000
 8c51eb2100c35d14244dcecb80839c780999159985415a684258c7154ec6bd42
 
-🐳  →  docker run -it --rm --net br --name c2 nicolaka/netshoot netgen c1 5000
+🐳  →  docker run -it --rm --net br --name c2 gabidavar/netshoot netgen c1 5000
 Listener started on port 5000
 Sending traffic to c1 on port 5000 every 10 seconds
 Sent 1 messages to c1:5000
@@ -427,7 +427,7 @@ purpose: a collection of utilities for controlling TCP / IP networking and traff
 ```
 # Sample routing and arp table of the docker host.
 
-🐳  → docker run -it --net host nicolaka/netshoot
+🐳  → docker run -it --net host gabidavar/netshoot
 
 / # ip route show
 default via 192.168.65.1 dev eth0  metric 204
@@ -459,10 +459,10 @@ ctop is a free open source, simple and cross-platform top-like command-line tool
 To get data into ctop, you'll need to bind docker.sock into the netshoot container.
 
 ```
-/ # docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nicolaka/netshoot ctop
+/ # docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock gabidavar/netshoot ctop
 ```
 
-![ctop.png](img/ctop.png)
+![ctop.png](https://github.com/mindw/netshoot/raw/master/img/ctop.png)
 
 It will display running and existed containers with useful metrics to help troubleshoot resource issues; hit "q" to exit.
 
