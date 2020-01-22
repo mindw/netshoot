@@ -9,6 +9,8 @@
 dP    dP `88888P'   dP   `88888P' dP    dP `88888P' `88888P'   dP
 ```
 
+**credit:** This is a fork of Nicola Kabar (nicolaka/netshot) excellent work which seems to be dormant.
+
 **Purpose:** Docker and Kubernetes network troubleshooting can become complex. With proper understanding of how Docker and Kubernetes networking works and the right set of tools, you can troubleshoot and resolve these networking issues. The `netshoot` container has a set of powerful networking tshooting tools that can be used to troubleshoot Docker networking issues. Along with these tools come a set of use-cases that show how this container can be used in real-world scenarios.
 
 **Network Namespaces:** Before starting to use this tool, it's important to go over one key topic: **Network Namespaces**. Network namespaces provide isolation of the system resources associated with networking. Docker uses network and other type of namespaces (`pid`,`mount`,`user`..etc) to create an isolated environment for each container. Everything from interfaces, routes, and IPs is completely isolated within the network namespace of the container. 
@@ -75,6 +77,7 @@ To troubleshoot these issues, `netshoot` includes a set of powerful tools as rec
     iproute2
     ipset
     iptables
+    ip6tables
     iptraf-ng
     iputils
     ipvsadm
@@ -95,8 +98,11 @@ To troubleshoot these issues, `netshoot` includes a set of powerful tools as rec
     scapy
     socat
     strace
+    su-exec
+    sudo
     tcpdump
     tcptraceroute
+    tini
     tree
     util-linux
     vim

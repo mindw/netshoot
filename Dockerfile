@@ -1,3 +1,4 @@
+
 FROM alpine:3.11.2
 
 RUN set -ex \
@@ -28,6 +29,7 @@ RUN set -ex \
     iproute2 \
     ipset \
     iptables \
+    ip6tables \
     iptraf-ng \
     iputils \
     ipvsadm \
@@ -50,8 +52,11 @@ RUN set -ex \
     scapy \
     socat \
     strace \
+    su-exec \
+    sudo \
     tcpdump \
     tcptraceroute \
+    tini \
     tree \
     util-linux \
     vim \
