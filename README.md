@@ -33,11 +33,17 @@ Cool thing about namespaces is that you can switch between them. You can enter a
 
 If you want to spin up a throw away container for debugging.
 
-`$ kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --image gabidavar/netshoot -- /bin/bash`
+`$ kubectl run --generator=run-pod/v1 tmp-shell --image-pull-policy=Always --rm -it --image gabidavar/netshoot`
 
 And if you want to spin up a container on the host's network namespace.
 
-`$ kubectl run tmp-shell --generator=run-pod/v1 --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}'  --image gabidavar/netshoot  -- /bin/bash`
+`$ kubectl run tmp-shell --generator=run-pod/v1 --image-pull-policy=Always --rm -it --overrides='{"spec": {"hostNetwork": true, "enableServiceLinks": false}}'  --image gabidavar/netshoot`
+
+Priviliged and host networking.
+
+```$ kubectl run tmp-shell --generator=run-pod/v1 --image gabidavar/netshoot --rm -ti\
+ --overrides='{"spec": {"hostNetwork": true, "enableServiceLinks": false, "containers": [{"name": "tmp-shell", "image": "gabidavar/netshoot", "imagePullPolicy": "Always", "tty": true, "stdin": true, "securityContext": {"privileged": true} }]}}'
+```
 
 **Network Problems** 
 
@@ -320,7 +326,7 @@ ce4ff40a5456        gabidavar/netshoot:latest   "iperf -s -p 9999"       5 minut
 
 ## drill
 
-Purpose: drill is a tool	to designed to get all sorts of information out of the DNS.
+Purpose: drill is a tool to designed to get all sorts of information out of the DNS.
 
 Continuing the `iperf` example, we'll use `drill` to understand how services' DNS is resolved in Docker. 
 
