@@ -1,4 +1,3 @@
-
 FROM alpine:3.11.6
 
 RUN set -ex \
@@ -72,8 +71,26 @@ RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 RUN wget https://github.com/bcicen/ctop/releases/download/v0.7.3/ctop-0.7.3-linux-amd64 -O /usr/local/bin/ctop && chmod +x /usr/local/bin/ctop
 
 # Installing calicoctl
-ARG CALICOCTL_VERSION=v3.14.1
-RUN wget https://github.com/projectcalico/calicoctl/releases/download/${CALICOCTL_VERSION}/calicoctl && chmod +x calicoctl && mv calicoctl /usr/local/bin
+ARG CALICOCTL_VERSION=v3.15.0
+RUN set -exo pipefail; \
+    wget https://github.com/projectcalico/calicoctl/releases/download/${CALICOCTL_VERSION}/calicoctl; \
+    chmod +x calicoctl; \
+    mv calicoctl /usr/local/bin
+
+# Installing kubectl
+ARG KUBECTL_VERSION=v1.18.4
+RUN set -exo pipefail; \
+    wget https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl; \
+    chmod +x kubectl; \
+    mv kubectl /usr/local/bin;
+
+# Installing K9s
+ARG K9S_VERSION=v0.20.5
+RUN set -exo pipefail; \
+    curl -s -L https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | \
+        tar zxv k9s; \
+    chmod +x k9s; \
+    mv k9s /usr/local/bin;
 
 # Settings
 ADD motd /etc/motd
