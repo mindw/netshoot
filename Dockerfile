@@ -1,4 +1,4 @@
-FROM alpine:3.11.6
+FROM alpine:3.12.3
 
 RUN set -ex \
     && echo "http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
@@ -68,24 +68,24 @@ RUN [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
 RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 
 # Installing ctop - top-like container monitor
-RUN wget https://github.com/bcicen/ctop/releases/download/v0.7.3/ctop-0.7.3-linux-amd64 -O /usr/local/bin/ctop && chmod +x /usr/local/bin/ctop
+RUN wget https://github.com/bcicen/ctop/releases/download/v0.7.5/ctop-0.7.5-linux-amd64 -O /usr/local/bin/ctop && chmod +x /usr/local/bin/ctop
 
 # Installing calicoctl
-ARG CALICOCTL_VERSION=v3.15.0
+ARG CALICOCTL_VERSION=v3.17.1
 RUN set -exo pipefail; \
     wget https://github.com/projectcalico/calicoctl/releases/download/${CALICOCTL_VERSION}/calicoctl; \
     chmod +x calicoctl; \
     mv calicoctl /usr/local/bin
 
 # Installing kubectl
-ARG KUBECTL_VERSION=v1.18.4
+ARG KUBECTL_VERSION=v1.20.1
 RUN set -exo pipefail; \
     wget https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl; \
     chmod +x kubectl; \
     mv kubectl /usr/local/bin;
 
 # Installing K9s
-ARG K9S_VERSION=v0.20.5
+ARG K9S_VERSION=v0.24.2
 RUN set -exo pipefail; \
     curl -s -L https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | \
         tar zxv k9s; \
