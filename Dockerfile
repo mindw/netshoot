@@ -90,7 +90,7 @@ RUN set -exo pipefail; \
 # Installing K9s
 ARG K9S_VERSION=v0.24.10
 RUN set -exo pipefail; \
-    curl -s -L https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | \
+    curl -s -L https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_${K9S_VERSION}_Linux_x86_64.tar.gz | \
         tar zxv k9s; \
     chmod +x k9s; \
     mv k9s /usr/local/bin;
